@@ -1,80 +1,63 @@
-import React, { useState, useEffect } from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React from "react";
 import axios from "axios";
-import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
-import CardMedia from "@material-ui/core/CardMedia";
-import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Collapse from "@material-ui/core/Collapse";
 import Avatar from "@material-ui/core/Avatar";
-import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import GitHubCalendar from "react-github-calendar";
 
-function Follower({ follower }) {
-  const useStyles = makeStyles((theme) => ({
-    root: {
-      maxWidth: 345,
-      background: "lightyellow",
-      marginBottom: "15px",
-    },
-    media: {
-      height: 0,
-      paddingTop: "56.25%", // 16:9
-    },
-    expand: {
-      transform: "rotate(0deg)",
-      marginLeft: "auto",
-      transition: theme.transitions.create("transform", {
-        duration: theme.transitions.duration.shortest,
-      }),
-    },
-    expandOpen: {
-      transform: "rotate(180deg)",
-    },
-    avatar: {
-      backgroundImage: `url(${follower.avatar_url})`,
-      backgroundSize: "cover",
-    },
-  }));
-  const classes = useStyles();
+class Follower extends React.Component {
+  state = {
+    followersList: [],
+  };
 
-  const [followersList, setFollowersList] = useState([]);
+  componentDidMount() {
+    if (this.props.follower)
+      axios
+        .get(`https://api.github.com/users/${this.props.follower.login}/followers`)
+        .then((res) => {
+          this.setState({
+            followersList: res.data,
+          });
+        })
+        .catch((err) => console.log(err));
+  }
 
-  useEffect(() => {
-    axios
-      .get(`https://api.github.com/users/${follower.login}/followers`)
-      .then((res) => {
-        console.log(res);
-        setFollowersList(res.data);
-      })
-      .catch((err) => console.log(err));
-  }, [follower]);
-
-  return (
-    <div>
-      <Card className={classes.root}>
-        <CardHeader
-          avatar={
-            <Avatar aria-label="recipe" className={classes.avatar}>
-              {" "}
-            </Avatar>
-          }
-          title={
-            <a href={`${follower.html_url}`} target={`_blank`}>
-              {follower.login}
-            </a>
-          }
-          subheader={`Followers: ${followersList.length}`}
-        />
-      </Card>
-    </div>
-  );
+  render() {
+    return (
+      <div>
+        <Card
+          style={{
+            maxWidth: "480px",
+            marginBottom: "15px",
+          }}
+        >
+          <CardHeader
+            avatar={
+              <Avatar
+                aria-label="recipe"
+                style={{
+                  backgroundImage: `url(${this.props.follower.avatar_url})`,
+                  backgroundSize: "cover",
+                }}
+              >
+                {" "}
+              </Avatar>
+            }
+            title={
+              <a href={`${this.props.follower.html_url}`} target={`_blank`}>
+                {this.props.follower.login}
+              </a>
+            }
+            subheader={`Followers: ${this.state.followersList.length}`}
+          />
+          <GitHubCalendar
+            style={{ margin: "0 0 0 10px" }}
+            username={this.props.follower.login}
+          />
+        </Card>
+      </div>
+    );
+  }
 }
 
 export default Follower;

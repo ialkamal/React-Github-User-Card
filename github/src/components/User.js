@@ -4,23 +4,19 @@ import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
-import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
 import Collapse from "@material-ui/core/Collapse";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
-import Typography from "@material-ui/core/Typography";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
+import GitHubCalendar from "react-github-calendar";
+import { Typography } from "@material-ui/core";
 
 const User = ({ user, followers }) => {
   const useStyles = makeStyles((theme) => ({
     root: {
-      maxWidth: 345,
-      background: "lightgreen",
+      width: "500px",
+      marginTop: "25px",
     },
     media: {
       height: 0,
@@ -49,6 +45,11 @@ const User = ({ user, followers }) => {
     setExpanded(!expanded);
   };
 
+  const handleFollowers = () => {
+    if (followers) return followers.length;
+    return "loading...";
+  };
+
   return (
     <Card className={classes.root}>
       <CardHeader
@@ -74,10 +75,12 @@ const User = ({ user, followers }) => {
             {user.login}
           </a>
         }
-        subheader={`Followers: ${followers.length}`}
+        subheader={`Followers: ${handleFollowers()}`}
       />
+      <GitHubCalendar style={{ margin: "0 0 0 10px" }} username={user.login} />
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
+          <Typography>Followers:</Typography>
           <ListOfFollowers followers={followers} />
         </CardContent>
       </Collapse>
