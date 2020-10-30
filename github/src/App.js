@@ -33,14 +33,9 @@ export default class App extends Component {
 
   render() {
     return (
-      <div>
-        <h1>Welcome to React!</h1>
+      <div style={{ width: "1000px", margin: "20px auto" }}>
+        <h1 style={{ textAlign: "center" }}>Welcome to Github Cards!</h1>
         <User user={this.state.user} followers={this.state.followers} />
-        {this.state.followers.map((follower) => {
-          return (
-            <pre key={follower.id}>{JSON.stringify(follower, null, 2)}</pre>
-          );
-        })}
       </div>
     );
   }
